@@ -10,7 +10,7 @@
     "type": "git",
     "url": "git://github.com/Zettlr/Zettlr.git"
   },
-  "version": "3.1.0-beta.1",
+  "version": "3.1.0-beta.2",
   "license": "GPL-3.0",
   "description": "Your One-Stop Publication Workbench",
   "main": ".webpack/main",
@@ -81,7 +81,6 @@
     "luxon": "^3.4.4",
     "md5": "^2.3.0",
     "mermaid": "^10.9.0",
-    "minimatch": "^9.0.4",
     "nodehun": "^3.0.2",
     "pinia": "^2.1.7",
     "rehype-parse": "^9.0.0",

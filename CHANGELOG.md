@@ -67,6 +67,85 @@ follow these links again.
 Note that we have not yet implemented the functionality of auto-renaming files
 or showing tooltips on these links.
 
+## Project Overhaul: Full Control Over Your Files
+
+Projects are at the heart of Zettlr. As a writing toolbox primarily targeted at
+academics, journalists, and writers, it must cater not just to simple note-
+taking workflows, but also to serious writing. Because of this, Zettlr ships
+with a project feature since the very beginning (since version `0.18.0`,
+released on Jul 20, 2018, to be precise).
+
+However, for a long time the feature attempted to piggyback on the way your
+files were displayed. This meant that (a) the order in which your files were
+weaved together into the project file depended on the sorting of the directory,
+and (b) there was no clear way to exclude files that naturally amass during the
+lifetime of a project, such as notes, backup files, and miscellaneous.
+
+Zettlr 3.1.0 fixes this issue by introducing a rather small, but powerful change
+to the way projects work. We have removed the difficult to understand glob-
+patterns that were introduced in a less-than-ideal attempt to fix some of the
+complexity-issues that were introduced later (such as displaying file titles
+instead of filenames, and others). Instead, you can now explicitly select which
+files will be included in your bound export files – and in which order.
+
+The new file list, which you can find in the project properties dialog, aims to
+be dead-simple to understand, yet give you back the certainty which files will
+end up where in your export – without a doubt.
+
+This also means a change to your projects: After this update, the glob patterns
+will be removed from your `.ztr-directory` files and replaced with an (initially
+empty) array of files to be included in your project. That means that you will
+have to select the files you want to include in a project once after the update.
+
+Managing this list in the project properties is simple: The "Files" tab includes
+a list of all files available within the project's folder structure. To select a
+file for export, click the "+"-button to move it up and include it in the
+export. Next, you can use the "Up"- and "Down"-buttons to change the order of
+the files within your export. The "-"-button removes a file again and moves it
+back down to the list of ignored files. Changes are immediately applied and
+persisted to your disk.
+
+When you now export the project, Zettlr will use only the files you have
+selected, and put them in the appropriate order.
+
+Should you have deleted a file that you originally included in the list of
+files, Zettlr will show you a warning message as soon as you export it so that
+you can have a second look to not send off a file that's missing a crucial part
+of your work. Such missing files are shown atop of the available files and
+feature a "-"-button which allows you to remove them from the list. We opted for
+this approach, since it makes it transparent which files are missing so you can
+take the appropriate action (especially if it was an accidental deletion).
+
+## LanguageTool Improvements
+
+The first update to Zettlr's LanguageTool integration concerns the language
+detection. This update ships with two improvements:
+
+1. Zettlr implements LanguageTool's "Preferred Variants" setting
+2. LanguageTool respects the `lang` frontmatter property
+
+Those who prefer writing in British English (instead of, e.g., US English) had
+to resort to manually switching the automatically detected language from en-US
+to en-GB every time they opened a file. This has to do with fact that
+LanguageTool's auto-detector cannot reliably distinguish between variants of
+some languages (English, German, Portuguese, and Catalan). That is why LT
+implements a "Preferred Variants" setting that allows you to specify which
+variant you prefer when writing in any of these languages. Zettlr now implements
+this setting so that when LT auto-detects the language, it will choose that
+variant if it detects that, e.g., English is the language. You can adapt this in
+the settings.
+
+Second, LanguageTool now respects the `lang` property in YAML frontmatters. This
+will come in especially handy for people writing bilingual and where
+LanguageTool has troubles auto-detecting the proper language. By setting the
+property `lang` to the language of the document (e.g., `en-CA`), LanguageTool
+will default to that one instead of choosing the auto-detection. As an added
+benefit, Pandoc also supports this property to localize some things here and
+there (read more at https://pandoc.org/MANUAL.html#language-variables).
+
+Note that both improvements only apply to the initial loading of a document. You
+can always override the language on a per-document basis using the status bar.
+
 ## GUI and Functionality
 
 - **Feature**: Zettlr now supports titles in internal (wiki) links; the default
@@ -77,6 +156,8 @@ or showing tooltips on these links.
   option on the Pandoc Markdown reader (`wikilinks_title_after_pipe` or
   `wikilinks_title_before_pipe`, respectively) if you wish to export files with
   this option
+- **Feature**: Project Overhaul. Now you can properly manage which files will be
+  exported in projects, and in which order
 - **Feature**: Zettlr can now suggest you emojis during autocompletion. Emojis
   use the same trigger character as the snippets autocomplete, a colon (`:`);
   and Emojis will always be sorted below your snippets -- you can turn this off
@@ -90,6 +171,9 @@ or showing tooltips on these links.
   columns will be inserted
 - **Feature**: A new setting allows to highlight whitespace across the app
   (#1123)
+- **Feature**: Implemented the LanguageTool Preferred Variants setting; now you
+  can select variants of certain languages (English, German, Portuguese, and
+  Catalan) for cases in which the automatic detection may pick the wrong one
 - **Change**: The attachment sidebar no longer considers the "open folder" for
   fetching its "other files" -- instead it will use the last focused file's
   folder
@@ -104,6 +188,11 @@ or showing tooltips on these links.
   creation upon following internal links; now this will happen automatically as
   long as the "custom folder" option points to an existing folder; to disable
   this functionality simply remove the folder path
+- LanguageTool now respects the `lang` YAML frontmatter property (if present and
+  conforming to simple BCP-47 tags, e.g., `de` or `de-DE`), instead of
+  defaulting to "auto"; this allows you to specify the languages of your
+  documents instead of relying on LanguageTool to figure it out; may not work
+  with more exotic tag variants (such as `de-DE-x-simple-language`)
 - Fixed a bug where recent documents would not turn up in the menu
 - Fixed the sidebar shortcut: It is now `Cmd/Ctrl+Shift+0` (to align with the
   file manager shortcut, `Cmd/Ctrl+Shift+1`)
@@ -199,11 +288,14 @@ or showing tooltips on these links.
 - Improved how focusing the various open editors works (#4889)
 - Fixed an issue where some borders in between split views wouldn't be drawn in
   more complex layouts
+- Fixed an issue that would not add a newly created file outside the loaded
+  workspaces to the list of standalone files, leading to various minor
+  annoyances around other parts of the app
 
 ## Under the Hood
 
 - Version updates:
-  - Pandoc: `3.1.12.3`
+  - Pandoc: `3.1.13`
   - Electron: `29.2.0`
 - Switched from the `vue-recommended` to the `vue3-recommended` ESLint ruleset
 - Removed the config option `sortingTime` since that can be inferred from the
@@ -860,6 +952,11 @@ there.
 - The combined file tree is now more verbose when it comes to icons: Folders
   now always have icons to indicate that they're folders (can be overridden with
   a project icon or a custom icon), and Markdown files have a more distinct icon
+- Made the code block autocomplete more resilient in interaction with European
+  keyboard layouts' dead key mechanism
+- Contrain tooltips to a reasonable size, mainly to prevent overly long lines
+  that are uncomfortable to read when the tooltip spans an entire fullscreen
+  window
 
 ## Under the Hood
 
@@ -914,6 +1011,9 @@ there.
   command hub
 - Removed the `Zettlr` class; the last remnant of the old, class-based system
 - Remove deprecated modules `svg-inline-loader`, `raw-loader`, and `file-loader`
+- Removed unused Markdown Syntax Tree tags
+- Separate frontmatter detection and inner (YAML) parse responsibilities
+- Remove the `info` property from YAML frontmatter blocks in Markdown AST
 
 # 2.3.0
 
