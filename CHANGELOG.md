@@ -2,11 +2,76 @@
 
 ## GUI and Functionality
 
-(Nothing here)
+- Zettlr now remembers the widths of file manager and sidebar
+- You can now reset the file manager and sidebar widths by double-clicking the
+  corresponding resizer
+- Copying plain links in the form `<http://www.example.com>` will now remove the
+  angled brackets (#5285)
 
 ## Under the Hood
 
-(Nothing here)
+- Update Electron to `v31.3.0`
+- Switched to ESLint v9.x, thereby replacing the "old" `.eslintrc.json` config
+  with what ESLint calls "flat" configs
+
+# 3.2.0
+
+## Resolved Data Loss Issues
+
+When Zettlr v3.0.0 was released, we started receiving reports by users
+mentioning that some files wouldn't properly save, potentially leading to data
+loss. After searching for the underlying root cause, we have now identified it
+as improper newline handling in files. Specifically, we have accidentally
+introduced a bug that would render Zettlr incapable of properly detecting
+Windows-style CRLF newlines. This means that Zettlr was only sometimes able to
+properly read and modify such files.
+
+This update fixes this bug. Now, Zettlr is able to properly read and modify any
+file, regardless of whether it has been created on Windows, macOS, Linux, or
+even some older systems. We would like to apologize for this bug and thank you
+for sticking with Zettlr despite it.
+
+## Changes to the file filtering logic
+
+The filter field in the file manager has always applied OR-logic when searching
+for files and workspaces. In this latest update, Zettlr changes to AND file
+filtering logic, meaning that only items matching all queries will be displayed
+when entering phrases separated by spaces.
+
+As an example: Until now, searching for "Niklas Luhmann" would've surfaced files
+that contained either "Niklas" or "Luhmann," or both. From now on, searching for
+"Niklas Luhmann" will only show files that contain *both* "Niklas" *and*
+"Luhmann" and exclude files that miss one of these phrases.
+
+## GUI and Functionality
+
+- **Feature**: The attachment/assets/other file sidebar tab now also shows files
+  found in the default image folder where applicable
+- **Feature**: The right-click context menu for external markdown links now 
+  contains an option to remove a link. When removing `<link>` style links, the
+  `link` text remains as plain text. When removing `[title](link)` style links, 
+  the `title` text remains as plain text.
+- **Change**: When searching for files in the filter field, only files and
+  workspaces that match all queries entered will be displayed
+- Fixed the French translation of unsaved-changes dialog actions. (#5177)
+- Fixed bugs with properly saving files (and retaining linefeeds) on Windows
+  systems; now Zettlr should be capable of handling any type of linefeed (#5109)
+- Fixed an issue where checkboxes in various list controls would not be properly
+  updated to reflect the actual, underlying value
+- Fix assets file icons in the sidebar
+- Design fixes in the sidebar
+- Fix: The file preview tooltip now respects the filename display settings
+- Fix: Focus input field when search in folder (global search) is
+  triggered
+
+## Under the Hood
+
+- Upgrade Electron to `v30.1.0` (cf. issue #5135 and Electron issue #41839)
+- Downgrade Linux builds to use Ubuntu 20.04 instead of 22.04 (#5137)
+- Fully abstract away newline handling from the internal logic. Now, newlines
+  are always `\n` across the entire app. The actual newlines from the files will
+  be stored in their respective file descriptor, and will be exclusively used on
+  file reads (to replace them with `\n`) and file writes (to replace `\n` with)
 
 # 3.1.1
 
