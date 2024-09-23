@@ -1,5 +1,44 @@
 # Upcoming
 
+## Changes to Pandoc Profiles
+
+This update fixes a workaround that Zettlr had in place for a shortcoming of
+Pandoc regarding the automatic numbering of headings. This workaround is no
+longer necessary, since Pandoc has since fixed the issue. 
+
+Zettlr now ships with changed default profiles for various export formats. Since
+Zettlr never overwrites any data, the new defaults will not be applied
+automatically. You can apply the change manually by removing the following line
+from the default profiles: `shift-heading-level-by: 1`.
+
+## GUI and Functionality
+
+- **change**: Remove `shift-heading-level-by: 1` line from default profiles
+- Fixed the "Paste as Plain" menu item not working (#5052)
+- Dark mode folded header's ellipsis are now properly colored (#5284)
+- Add Pascal syntax highlighting (keyword: `pascal`; #5368)
+- Fixed images in file previews on hovering internal file links not working
+  (#5041)
+- Fixed the tag search from the tag cloud popover (#5124)
+- Fixed visual artifacts in the backgrounds for code blocks and comments (#5260)
+- Fixed a bug that would apply certain shortcuts to all open editor panes,
+  rather than the last focused one (#5282)
+- The save changes dialog now offers a cancel option that will be chosen when
+  pressing Escape (#5338)
+- Updated translation for `es-ES` (#5372)
+
+## Under the Hood
+
+- Images across the application now have a `max-width: 100%` applied to them to
+  ensure they never overflow their parent container.
+- The `md2html` utility function now allows a fourth parameter containing hooks
+  that allow the further customization of the produced HTML output
+- Bumped CodeMirror and dependencies
+- Bumped ESLint and dependencies
+- Fixed HTML DOM structure in a few places where they would violate the spec
+
+# 3.2.1
+
 ## GUI and Functionality
 
 - Zettlr now remembers the widths of file manager and sidebar
@@ -7,12 +46,23 @@
   corresponding resizer
 - Copying plain links in the form `<http://www.example.com>` will now remove the
   angled brackets (#5285)
+- Reverted a change from 3.1.0 which altered the process of creating new files
+  in such a way that the "open directory" was no longer considered; now Zettlr
+  will again use the open directory if present, allowing users to quickly create
+  new files by selecting a folder first in the file manager (#5141)
+- Updated translations:
+  - `it-IT` (#5233)
+  - `zh-TW` (#5327)
+  - `nl-NL` (#5319)
+  - `ru-RU` (#5314)
 
 ## Under the Hood
 
-- Update Electron to `v31.3.0`
+- Update Electron to `v32.1.0`
+- Update Pandoc to `v3.4`
 - Switched to ESLint v9.x, thereby replacing the "old" `.eslintrc.json` config
   with what ESLint calls "flat" configs
+- Bumped various dependencies
 
 # 3.2.0
 
